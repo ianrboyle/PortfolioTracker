@@ -17,6 +17,8 @@ namespace API.Extensions
       services.AddScoped<Persistence.Logger.ILogger, Persistence.Logger.Logger>();
       services.AddScoped<IUserRetriever, UserRetriever>();
       services.AddScoped<IUserLogic, UserLogic>();
+      services.AddScoped<IPositionLogic, PositionLogic>();
+      services.AddScoped<IPositionRetriever, PositionRetriever>();
       // services.AddScoped<IUserRepository, UserRepository>();
       // services.AddScoped<IPositionService, PositionService>();
       // services.AddScoped<ISectorService, SectorService>();
