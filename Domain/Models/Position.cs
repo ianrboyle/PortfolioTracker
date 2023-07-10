@@ -13,8 +13,8 @@ namespace Domain.Models
       this.AverageCostBasis = float.Parse(rdr["average_cost_basis"].ToString());
       this.SharesOwned = float.Parse(rdr["shares_owned"].ToString());
       this.CurrentTotalValue = float.Parse(rdr["current_total_value"].ToString());
-      this.SectorName = rdr["sector_name"].ToString(); ;
-      this.IndustryName = rdr["industry_name"].ToString(); ;
+      this.SectorName = rdr["sector_name"].ToString();
+      this.IndustryName = rdr["industry_name"].ToString();
       //   this.AppUserId = Int32.Parse(rdr["app_user_id"].ToString());
       // this.Created = DateTime.Parse(rdr["dateofbirth"].ToString(), CultureInfo.CurrentCulture, DateTimeStyles.None);
       // this.InvestingStyle = rdr["investingstyle"].ToString();
