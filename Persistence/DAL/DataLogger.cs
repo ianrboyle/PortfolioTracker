@@ -13,22 +13,22 @@ namespace Persistence.DAL
       _connections = connections;
     }
 
-    public async Task LogError(Exception exception, string userId = null)
+    public async Task LogError(Exception exception, string appUserId = null)
     {
       using (NpgsqlConnection conn = _connections.GetConnection())
       {
         try
         {
-          //   if (conn.State != System.Data.ConnectionState.Open) { await conn.OpenAsync(); }
-          //   NpgsqlCommand cmd = new NpgsqlCommand("log_error", conn);
-          //   cmd.CommandType = System.Data.CommandType.StoredProcedure;
-          //   cmd.Parameters.AddWithValue("userid", string.IsNullOrEmpty(userId) ? "" : userId);
-          //   cmd.Parameters.AddWithValue("message", exception.Message);
-          //   cmd.Parameters.AddWithValue("stacktrace", exception.StackTrace ?? "");
-          //   cmd.Parameters.AddWithValue("innerexception", exception.InnerException == null ? "" : exception.InnerException.Message);
-          //   cmd.Parameters.AddWithValue("source", exception.Source);
+          if (conn.State != System.Data.ConnectionState.Open) { await conn.OpenAsync(); }
+          NpgsqlCommand cmd = new NpgsqlCommand("log_error", conn);
+          cmd.CommandType = System.Data.CommandType.StoredProcedure;
+          cmd.Parameters.AddWithValue("app_user_id", string.IsNullOrEmpty(appUserId) ? (object)DBNull.Value : int.Parse(appUserId));
+          cmd.Parameters.AddWithValue("message", exception.Message);
+          cmd.Parameters.AddWithValue("stack_trace", exception.StackTrace ?? "");
+          cmd.Parameters.AddWithValue("inner_exception", exception.InnerException?.Message ?? "");
+          cmd.Parameters.AddWithValue("source", exception.Source);
 
-          //   await cmd.ExecuteScalarAsync();
+          await cmd.ExecuteNonQueryAsync();
         }
         catch (Exception ex)
         {

@@ -5,6 +5,6 @@ namespace Persistence.DAL
 {
   public interface IDataLogger
   {
-    Task LogError(Exception exception, string userId = null);
+    Task LogError(Exception exception, string appUserId = null);
   }
 }
