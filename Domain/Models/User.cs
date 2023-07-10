@@ -11,10 +11,10 @@ namespace Domain
       this.Id = Int32.Parse(rdr["id"].ToString());
       this.UserName = rdr["username"].ToString();
       this.DateOfBirth = DateTime.Parse(rdr["dateofbirth"].ToString(), CultureInfo.CurrentCulture, DateTimeStyles.None);
-      this.Created = DateTime.Parse(rdr["dateofbirth"].ToString(), CultureInfo.CurrentCulture, DateTimeStyles.None);
-      this.InvestingStyle = rdr["investingstyle"].ToString();
-      this.City = rdr["city"].ToString();
-      this.Country = rdr["country"].ToString();
+      // this.Created = DateTime.Parse(rdr["dateofbirth"].ToString(), CultureInfo.CurrentCulture, DateTimeStyles.None);
+      // this.InvestingStyle = rdr["investingstyle"].ToString();
+      // this.City = rdr["city"].ToString();
+      // this.Country = rdr["country"].ToString();
     }
     public int Id { get; set; }
     public string UserName { get; set; }

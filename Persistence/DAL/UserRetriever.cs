@@ -19,25 +19,20 @@ namespace Persistence.DAL
     {
       List<User> users = new List<User>();
 
-      //   using (NpgsqlConnection conn = _connections.GetConnection())
-      // var dataSourceBuilder = new NpgsqlDataSourceBuilder(_connections.GetConnection());
-      // var connectionString = dataSourceBuilder.ConnectionString;
-      await using var conn = _connections.GetConnection();
-      string sqlQuery = "SELECT * FROM appusers";
+      await using NpgsqlConnection conn = _connections.GetConnection();
       {
         try
         {
           if (conn.State != System.Data.ConnectionState.Open) { await conn.OpenAsync(); }
-          await using var command = new NpgsqlCommand(sqlQuery, conn);
-          await using var reader = await command.ExecuteReaderAsync();
-          //   if (conn.State != System.Data.ConnectionState.Open) { await conn.OpenAsync(); }
-          //   NpgsqlCommand cmd = new NpgsqlCommand("get_users", conn);
-          //   cmd.CommandType = System.Data.CommandType.StoredProcedure;
+          await using NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM get_all_users()", conn);
 
-          //   var rdr = await command.ExecuteReaderAsync();
-          while (await reader.ReadAsync())
+          // cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+          await using var rdr = await cmd.ExecuteReaderAsync();
+
+          while (await rdr.ReadAsync())
           {
-            var user = new User(reader);
+            var user = new User(rdr);
             users.Add(user);
           }
         }
@@ -51,3 +46,13 @@ namespace Persistence.DAL
     }
   }
 }
+
+
+// while (await reader.ReadAsync())
+// {
+//   var user = new User(reader);
+//   users.Add(user);
+// }
+
+// await using var command = new NpgsqlCommand(sqlQuery, conn);
+// await using var reader = await command.ExecuteReaderAsync();
