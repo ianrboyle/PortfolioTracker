@@ -9,16 +9,14 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class Positions : ControllerBase
+public class Positions : BaseController
 {
 
-  private readonly Persistence.Logger.ILogger _logger;
   private readonly IPositionLogic _positionLogic;
 
-  public Positions(Persistence.Logger.ILogger logger, IPositionLogic positionLogic)
+  public Positions(IPositionLogic positionLogic)
   {
     _positionLogic = positionLogic;
-    _logger = logger;
   }
 
   [HttpGet("{appUserId}")]
@@ -32,7 +30,7 @@ public class Positions : ControllerBase
     }
     catch (Exception ex)
     {
-      await _logger.Log(ex);
+      await Logger.Log(ex, appUserId.ToString());
 
       return BadRequest();
     }

@@ -5,10 +5,10 @@ namespace Persistence.BLL
 {
   public class PositionLogic : IPositionLogic
   {
-    private readonly IPositionRetriever _retriever;
-    public PositionLogic(IPositionRetriever retriever)
+    private readonly IPositionRepository _repository;
+    public PositionLogic(IPositionRepository repository)
     {
-      _retriever = retriever;
+      _repository = repository;
 
     }
     public Task<Position> GetUserPosition(int positionId)
@@ -18,7 +18,7 @@ namespace Persistence.BLL
 
     public Task<List<Position>> GetUserPositions(int appUserId)
     {
-      return _retriever.GetUserPositions(appUserId);
+      return _repository.GetUserPositions(appUserId);
     }
   }
 }

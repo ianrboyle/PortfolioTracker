@@ -15,10 +15,10 @@ namespace API.Extensions
       services.AddScoped<IConnections, Connections>();
       services.AddScoped<IDataLogger, DataLogger>();
       services.AddScoped<Persistence.Logger.ILogger, Persistence.Logger.Logger>();
-      services.AddScoped<IUserRetriever, UserRetriever>();
+      services.AddScoped<IUserRepository, UserRepository>();
       services.AddScoped<IUserLogic, UserLogic>();
       services.AddScoped<IPositionLogic, PositionLogic>();
-      services.AddScoped<IPositionRetriever, PositionRetriever>();
+      services.AddScoped<IPositionRepository, PositionRepository>();
       // services.AddScoped<IUserRepository, UserRepository>();
       // services.AddScoped<IPositionService, PositionService>();
       // services.AddScoped<ISectorService, SectorService>();

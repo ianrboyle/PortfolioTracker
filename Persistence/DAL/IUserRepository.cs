@@ -2,7 +2,7 @@ using Domain;
 
 namespace Persistence.DAL
 {
-  public interface IUserRetriever
+  public interface IUserRepository
   {
     Task<List<User>> GetUsers();
   }

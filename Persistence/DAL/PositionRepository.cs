@@ -4,13 +4,13 @@ using Persistence.Logger;
 
 namespace Persistence.DAL
 {
-  public class PositionRetriever : IPositionRetriever
+  public class PositionRepository : IPositionRepository
   {
     IConnections _connections;
 
     ILogger _logger;
 
-    public PositionRetriever(IConnections connections, ILogger logger)
+    public PositionRepository(IConnections connections, ILogger logger)
     {
       _connections = connections;
       _logger = logger;

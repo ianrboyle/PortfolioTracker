@@ -8,16 +8,15 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class Users : ControllerBase
+public class Users : BaseController
 {
 
-  private readonly Persistence.Logger.ILogger _logger;
+
   private readonly IUserLogic _userLogic;
 
-  public Users(Persistence.Logger.ILogger logger, IUserLogic userLogic)
+  public Users(IUserLogic userLogic)
   {
     _userLogic = userLogic;
-    _logger = logger;
   }
 
   [HttpGet]
@@ -25,13 +24,13 @@ public class Users : ControllerBase
   {
     try
     {
-      List<User> investors = await _userLogic.GetUsers();
+      List<User> users = await _userLogic.GetUsers();
 
-      return Ok(investors);
+      return Ok(users);
     }
     catch (Exception ex)
     {
-      await _logger.Log(ex);
+      await Logger.Log(ex);
 
       return BadRequest();
     }

@@ -4,13 +4,13 @@ using Persistence.Logger;
 
 namespace Persistence.DAL
 {
-  public class UserRetriever : IUserRetriever
+  public class UserRepository : IUserRepository
   {
     IConnections _connections;
 
     ILogger _logger;
 
-    public UserRetriever(IConnections connections, ILogger logger)
+    public UserRepository(IConnections connections, ILogger logger)
     {
       _connections = connections;
       _logger = logger;
