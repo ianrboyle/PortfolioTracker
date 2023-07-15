@@ -35,4 +35,21 @@ public class Users : BaseController
       return BadRequest();
     }
   }
+
+  [HttpGet("{userId}")]
+  public async Task<ActionResult<User>> GetUser(int userId)
+  {
+    try
+    {
+      User user = await _userLogic.GetUser(userId);
+
+      return Ok(user);
+    }
+    catch (Exception ex)
+    {
+      await Logger.Log(ex);
+
+      return BadRequest();
+    }
+  }
 }

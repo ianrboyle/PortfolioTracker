@@ -15,6 +15,37 @@ namespace Persistence.DAL
       _connections = connections;
       _logger = logger;
     }
+
+    public async Task<User> GetUser(int userId)
+    {
+      var user = new User();
+      await using NpgsqlConnection conn = _connections.GetConnection();
+      {
+        try
+        {
+          if (conn.State != System.Data.ConnectionState.Open) { await conn.OpenAsync(); }
+          var sqlString = $"SELECT * FROM get_user_by_id({userId})";
+          await using NpgsqlCommand cmd = new NpgsqlCommand(sqlString, conn);
+          cmd.Parameters.AddWithValue("id", userId);
+          // cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+          await using var rdr = await cmd.ExecuteReaderAsync();
+
+          while (await rdr.ReadAsync())
+          {
+            user = new User(rdr);
+            return user;
+          }
+        }
+        catch (Exception ex)
+        {
+          await _logger.Log(ex);
+        }
+
+      }
+      return user;
+    }
+
     public async Task<List<User>> GetUsers()
     {
       List<User> users = new List<User>();
@@ -43,6 +74,30 @@ namespace Persistence.DAL
       }
 
       return users;
+    }
+
+    public async Task<User> SignUpUser(User user)
+    {
+      await using NpgsqlConnection conn = _connections.GetConnection();
+      try
+      {
+        if (conn.State != System.Data.ConnectionState.Open) { await conn.OpenAsync(); }
+        await using NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM get_all_users()", conn);
+
+        // cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+        await using var rdr = await cmd.ExecuteReaderAsync();
+
+        while (await rdr.ReadAsync())
+        {
+          user = new User(rdr);
+        }
+      }
+      catch (Exception ex)
+      {
+        await _logger.Log(ex);
+      }
+      return user;
     }
   }
 }

@@ -11,6 +11,12 @@ namespace Persistence.BLL
       _repository = repository;
 
     }
+
+    public Task<User> GetUser(int userId)
+    {
+      return _repository.GetUser(userId);
+    }
+
     public Task<List<User>> GetUsers()
     {
       return _repository.GetUsers();
