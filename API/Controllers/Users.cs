@@ -18,6 +18,19 @@ public class Users : BaseController
   {
     _userLogic = userLogic;
   }
+  [HttpPost]
+  public async Task SignUpUser([FromBody] User appUser)
+  {
+    try
+    {
+      await _userLogic.SignUpUser(appUser);
+
+    }
+    catch (Exception ex)
+    {
+      await Logger.Log(ex);
+    }
+  }
 
   [HttpGet]
   public async Task<ActionResult<List<User>>> GetUsers()
@@ -41,7 +54,7 @@ public class Users : BaseController
   {
     try
     {
-      User user = await _userLogic.GetUser(userId);
+      User user = await _userLogic.GetUserById(userId);
 
       return Ok(user);
     }

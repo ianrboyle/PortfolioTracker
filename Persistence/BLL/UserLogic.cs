@@ -12,9 +12,9 @@ namespace Persistence.BLL
 
     }
 
-    public Task<User> GetUser(int userId)
+    public Task<User> GetUserById(int userId)
     {
-      return _repository.GetUser(userId);
+      return _repository.GetUserById(userId);
     }
 
     public Task<List<User>> GetUsers()
@@ -22,9 +22,10 @@ namespace Persistence.BLL
       return _repository.GetUsers();
     }
 
-    public Task<User> SignUpUser(User appUser)
+    public Task SignUpUser(User appUser)
     {
-      throw new NotImplementedException();
+      return _repository.SignUpUser(appUser);
     }
+
   }
 }
