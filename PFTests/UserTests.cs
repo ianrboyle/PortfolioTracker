@@ -166,4 +166,27 @@ public class UserRepositoryTests
     _logger.Verify(logger => logger.Log(It.IsAny<Exception>()), Times.Once);
   }
 
+  [Fact]
+  public async Task DeleteUser_Success()
+  {
+    // Arrange
+
+    var _userLogicMock = new Mock<IUserLogic>();
+    _userLogicMock.Setup(ul => ul.DeleteUser(1)).Returns(Task.CompletedTask);
+    var controller = new Users(_userLogic.Object, _logger.Object);
+
+    // Act
+    await controller.DeleteUser(1);
+    // Assert
+    _userLogic.Verify(ul => ul.DeleteUser(1), Times.Once);
+
+    // Act
+    IActionResult result = await controller.DeleteUser(1);
+
+    // Assert
+    Assert.IsType<OkObjectResult>(result);
+    var okResult = (OkObjectResult)result;
+    Assert.Equal("Deletion successful.", okResult.Value);
+  }
+
 }
