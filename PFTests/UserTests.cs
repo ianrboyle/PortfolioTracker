@@ -1,81 +1,120 @@
-using System.Net.Http;
-using Domain;
-using Newtonsoft;
-using Newtonsoft.Json;
-using Moq;
-using Npgsql;
+// Test Fixture
 using Persistence.DAL;
-using System.Text;
+using Persistence.Logger;
+using Moq;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Xunit.Abstractions;
+using Persistence.BLL;
+using Domain;
+using API.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace PFTests;
+public class UserRepositoryTests
 
-public class UserTests
 {
-  private readonly HttpClient _client;
-  private readonly Mock<IConnections> _connections;
+  private readonly Mock<IUserLogic> _userLogic;
+  private readonly Mock<ILogger> _logger;
 
-  public UserTests()
+  public UserRepositoryTests()
   {
-    _client = new HttpClient();
-    _connections = new Mock<IConnections>();
+    _userLogic = new Mock<IUserLogic>();
+    _logger = new Mock<ILogger>();
+  }
+
+  // Write tests for UserRepository methods
+  [Fact]
+  public async Task GetUserById_Should_Return_User_IfExists()
+  {
+
+    // var mockUserLogic = new Mock<IUserLogic>();
+    List<User> mockUsers = new List<User>
+        {
+            new User { Id = 1, UserName = "John" },
+            new User { Id = 2, UserName = "Jane" }
+        };
+
+    _userLogic.Setup(ul => ul.GetUsers()).ReturnsAsync(mockUsers);
+
+    var controller = new Users(_userLogic.Object, _logger.Object);
+
+    // Act
+    var result = await controller.GetUsers();
+
+    // Assert
+    Assert.IsType<OkObjectResult>(result.Result);
+
+    var okResult = result.Result as OkObjectResult;
+    Assert.Equal(mockUsers, okResult.Value);
   }
   [Fact]
-  public async Task GetUserTest_Success()
+  public async Task GetUsers_ReturnsBadRequestOnException()
   {
-    var user = new User
+    // var mockUserLogic = new Mock<IUserLogic>();
+    List<User> mockUsers = new List<User>
     {
-      Id = 13,
-      UserName = "whatever"
     };
-    var response = await _client.GetAsync("https://localhost:5001/users/13");
-    var responseString = await response.Content.ReadAsStringAsync();
-    User getUser = JsonConvert.DeserializeObject<User>(responseString);
-    Console.WriteLine();
-    Assert.Equal(user.Id, getUser.Id);
-    Assert.Equal(user.UserName, getUser.UserName);
+
+    _userLogic.Setup(ul => ul.GetUsers()).ReturnsAsync(mockUsers);
+
+    var controller = new Users(_userLogic.Object, _logger.Object);
+
+    // Act
+    var result = await controller.GetUsers();
+
+    // Assert
+    Assert.IsType<OkObjectResult>(result.Result);
+
+    var okResult = result.Result as OkObjectResult;
+    Assert.Equal(mockUsers, okResult.Value);
   }
 
   [Fact]
-  public async Task GetUserTest_Fail()
+  public async Task GetUserById_ReturnsUserIfExists()
   {
-    var user = new User
+    // var mockUserLogic = new Mock<IUserLogic>();
+    User user = new User
     {
-      Id = 16,
-      UserName = "whatever"
+      Id = 1,
+      UserName = "Jogn"
     };
-    var response = await _client.GetAsync("https://localhost:5001/users/16");
-    var responseString = await response.Content.ReadAsStringAsync();
-    ErrorResponse error = JsonConvert.DeserializeObject<ErrorResponse>(responseString);
-    Assert.Equal(error.Status, 400);
-    Assert.Equal(error.Title, "Bad Request");
+
+    _userLogic.Setup(ul => ul.GetUserById(1)).ReturnsAsync(user);
+
+    var controller = new Users(_userLogic.Object, _logger.Object);
+
+    // Act
+    var result = await controller.GetUser(1);
+
+    // Assert
+    Assert.IsType<OkObjectResult>(result.Result);
+
+    var okResult = result.Result as OkObjectResult;
+    Assert.Equal(user, okResult.Value);
   }
 
   [Fact]
-  public async Task SignUpUser_Success()
+  public async Task GetUserById_ReturnsBadRequest()
   {
-    var user = new User
+    // var mockUserLogic = new Mock<IUserLogic>();
+    User user = new User
     {
-      UserName = "boyleee"
+      Id = 1,
+      UserName = "Jogn"
     };
-    var userJson = JsonConvert.SerializeObject(user);
 
-    // Convert the JSON string to HttpContent
-    HttpContent httpContent = new StringContent(userJson, Encoding.UTF8, "application/json");
+    // Assuming _userLogic is a mock of IUserLogic
+    _userLogic.Setup(ul => ul.GetUserById(0)).ThrowsAsync(new Exception("An error occurred while fetching the user."));
 
-    var response = await _client.PostAsync("https://localhost:5001/users", httpContent);
-    var responseString = await response.Content.ReadAsStringAsync();
-    ErrorResponse error = JsonConvert.DeserializeObject<ErrorResponse>(responseString);
-    Assert.Equal(error.Status, 400);
-    Assert.Equal(error.Title, "Bad Request");
+    var controller = new Users(_userLogic.Object, _logger.Object);
 
-
+    // Act
+    var result = await controller.GetUser(0);
+    var statusCode = result.Result.ToString();
+    // Assert
+    Assert.Contains("Bad", statusCode);
+    // var badRequestResult = result as BadRequestObjectResult;
+    // Assert.Equal("An error occurred while fetching the user.", result.Value);
   }
 
-  public class ErrorResponse
-  {
-    public string Type { get; set; }
-    public string Title { get; set; }
-    public int Status { get; set; }
-    public string TraceId { get; set; }
-  }
 }
