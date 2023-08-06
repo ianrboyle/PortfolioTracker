@@ -1,3 +1,4 @@
 TODO:
 - CRUD Position
+- Return PositionDto instead of positions in get requests
 - TESTS for Position
