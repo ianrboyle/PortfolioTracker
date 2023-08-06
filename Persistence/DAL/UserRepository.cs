@@ -1,3 +1,4 @@
+using System.Globalization;
 using Domain;
 using Npgsql;
 using Persistence.Logger;
@@ -105,7 +106,7 @@ namespace Persistence.DAL
 
           while (await rdr.ReadAsync())
           {
-            var user = new User(rdr);
+            var user = MapUserFromDataReader(rdr);
             users.Add(user);
           }
         }
@@ -145,15 +146,22 @@ namespace Persistence.DAL
         await _logger.Log(ex);
       }
     }
+
+    private User MapUserFromDataReader(NpgsqlDataReader rdr)
+    {
+      int id = Int32.Parse(rdr["id"].ToString());
+      string userName = rdr["user_name"].ToString();
+      var created = DateTime.Parse(rdr["created"].ToString(), CultureInfo.CurrentCulture, DateTimeStyles.None);
+
+
+      return new User
+      {
+        Id = id,
+        UserName = userName,
+        Created = created
+      };
+    }
   }
 }
 
 
-// while (await reader.ReadAsync())
-// {
-//   var user = new User(reader);
-//   users.Add(user);
-// }
-
-// await using var command = new NpgsqlCommand(sqlQuery, conn);
-// await using var reader = await command.ExecuteReaderAsync();
