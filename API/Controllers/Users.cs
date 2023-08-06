@@ -13,9 +13,11 @@ public class Users : BaseController
 
 
   private readonly IUserLogic _userLogic;
+  private readonly Persistence.Logger.ILogger _logger;
 
-  public Users(IUserLogic userLogic)
+  public Users(IUserLogic userLogic, Persistence.Logger.ILogger logger)
   {
+    _logger = logger;
     _userLogic = userLogic;
   }
   [HttpPost]
@@ -60,7 +62,7 @@ public class Users : BaseController
     }
     catch (Exception ex)
     {
-      await Logger.Log(ex);
+      await _logger.Log(ex);
 
       return BadRequest();
     }
