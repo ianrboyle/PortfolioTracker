@@ -1,14 +1,10 @@
 // Test Fixture
-using Persistence.DAL;
 using Persistence.Logger;
 using Moq;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Xunit.Abstractions;
 using Persistence.BLL;
 using Domain;
 using API.Controllers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 public class UserRepositoryTests
 
