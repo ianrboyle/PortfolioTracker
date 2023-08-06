@@ -35,4 +35,20 @@ public class Positions : BaseController
       return BadRequest();
     }
   }
+  [HttpGet("position/{positionId}")]
+  public async Task<ActionResult<Position>> GetPositionById(int positionId)
+  {
+    try
+    {
+      Position position = await _positionLogic.GetPositionById(positionId);
+
+      return Ok(position);
+    }
+    catch (Exception ex)
+    {
+      await Logger.Log(ex);
+
+      return BadRequest();
+    }
+  }
 }

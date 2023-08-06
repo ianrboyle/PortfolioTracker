@@ -11,9 +11,9 @@ namespace Persistence.BLL
       _repository = repository;
 
     }
-    public Task<Position> GetUserPosition(int positionId)
+    public Task<Position> GetPositionById(int positionId)
     {
-      throw new NotImplementedException();
+      return _repository.GetPositionById(positionId);
     }
 
     public Task<List<Position>> GetUserPositions(int appUserId)

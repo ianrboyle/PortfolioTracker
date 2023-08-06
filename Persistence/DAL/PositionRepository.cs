@@ -15,9 +15,36 @@ namespace Persistence.DAL
       _connections = connections;
       _logger = logger;
     }
-    public Task<Position> GetUserPosition(int positionId)
+    public async Task<Position> GetPositionById(int positionId)
     {
-      throw new NotImplementedException();
+      Position position = new();
+
+      await using NpgsqlConnection conn = _connections.GetConnection();
+      {
+        try
+        {
+          if (conn.State != System.Data.ConnectionState.Open) { await conn.OpenAsync(); }
+          var sqlString = "SELECT * FROM get_position_by_position_id(@p_id)";
+          await using NpgsqlCommand cmd = new NpgsqlCommand(sqlString, conn);
+
+          cmd.Parameters.AddWithValue("p_id", positionId);
+
+          // cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+          await using var rdr = await cmd.ExecuteReaderAsync();
+
+          while (await rdr.ReadAsync())
+          {
+            position = new Position(rdr);
+          }
+        }
+        catch (Exception ex)
+        {
+          await _logger.Log(ex);
+        }
+      }
+
+      return position;
     }
 
     public async Task<List<Position>> GetUserPositions(int appUserId)
