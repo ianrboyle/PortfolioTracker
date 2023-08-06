@@ -26,6 +26,12 @@ namespace Persistence.BLL
     {
       return _repository.SignUpUser(appUser);
     }
+    public Task DeleteUser(int userId)
+    {
+      return _repository.DeleteUser(userId);
+    }
+
+
 
   }
 }

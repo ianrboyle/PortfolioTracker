@@ -69,4 +69,13 @@ public class Users : BaseController
       return BadRequest();
     }
   }
+
+  [HttpDelete("{userId}")]
+  public async Task<IActionResult> DeleteUser(int userId)
+  {
+    await _userLogic.DeleteUser(userId);
+    return Ok("Deletion successful.");
+
+
+  }
 }

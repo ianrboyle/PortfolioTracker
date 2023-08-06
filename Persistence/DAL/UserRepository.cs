@@ -18,6 +18,27 @@ namespace Persistence.DAL
       _logger = logger;
     }
 
+    public async Task DeleteUser(int userId)
+    {
+      await using NpgsqlConnection conn = _connections.GetConnection();
+      try
+      {
+        if (conn.State != System.Data.ConnectionState.Open) { await conn.OpenAsync(); }
+
+        var sqlString = $" SELECT Delete_User_By_UserId('{userId}');";
+        await using NpgsqlCommand cmd = new NpgsqlCommand(sqlString, conn);
+        cmd.Parameters.AddWithValue("userId", userId);
+
+        await using var rdr = await cmd.ExecuteReaderAsync();
+
+      }
+      catch (Exception ex)
+      {
+        await _logger.Log(ex);
+        throw;
+      }
+    }
+
     public async Task<User> GetUserById(int userId)
     {
       var user = new User();

@@ -7,6 +7,7 @@ namespace Persistence.BLL
     Task<List<User>> GetUsers();
     Task<User> GetUserById(int userId);
     Task SignUpUser(User appUser);
+    Task DeleteUser(int userId);
 
   }
 }

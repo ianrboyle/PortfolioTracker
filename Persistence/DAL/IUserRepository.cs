@@ -8,5 +8,6 @@ namespace Persistence.DAL
     Task<User> GetUserById(int userId);
     Task<User> GetUserByUserName(string userName);
     Task SignUpUser(User user);
+    Task DeleteUser(int userId);
   }
 }
