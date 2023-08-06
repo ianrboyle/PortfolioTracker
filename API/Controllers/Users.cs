@@ -21,16 +21,18 @@ public class Users : BaseController
     _userLogic = userLogic;
   }
   [HttpPost]
-  public async Task SignUpUser([FromBody] User appUser)
+  public async Task<IActionResult> SignUpUser([FromBody] User appUser)
   {
     try
     {
       await _userLogic.SignUpUser(appUser);
+      return Ok("Sign-up successful.");
 
     }
     catch (Exception ex)
     {
-      await Logger.Log(ex);
+      await _logger.Log(ex);
+      return Conflict(ex.Message);
     }
   }
 

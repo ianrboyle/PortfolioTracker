@@ -112,5 +112,58 @@ public class UserRepositoryTests
     // var badRequestResult = result as BadRequestObjectResult;
     // Assert.Equal("An error occurred while fetching the user.", result.Value);
   }
+  [Fact]
+  public async Task SignupUser_Success()
+  {
+    // var mockUserLogic = new Mock<IUserLogic>();
+    User user = new User
+    {
+      UserName = "Jogn"
+    };
+
+    // Assuming _userLogic is a mock of IUserLogic
+    _userLogic.Setup(ul => ul.SignUpUser(user)).Returns(Task.CompletedTask);
+    var controller = new Users(_userLogic.Object, _logger.Object);
+
+    // Act
+    await controller.SignUpUser(user);
+    // Assert
+    _userLogic.Verify(ul => ul.SignUpUser(user), Times.Once);
+
+    // Act
+    IActionResult result = await controller.SignUpUser(user);
+
+    // Assert
+    Assert.IsType<OkObjectResult>(result);
+    var okResult = (OkObjectResult)result;
+    Assert.Equal("Sign-up successful.", okResult.Value);
+  }
+
+
+  [Fact]
+  public async Task SignUpUser_UsernameAlreadyExists()
+  {
+    // Arrange
+    User user = new User
+    {
+      UserName = "John"
+    };
+
+    var _userLogicMock = new Mock<IUserLogic>();
+    _userLogicMock.Setup(ul => ul.SignUpUser(user)).ThrowsAsync(new Exception("Username already exists."));
+
+
+    var controller = new Users(_userLogicMock.Object, _logger.Object);
+
+    // Act
+    IActionResult result = await controller.SignUpUser(user);
+
+    // Assert
+    Assert.IsType<ConflictObjectResult>(result);
+    var conflictResult = (ConflictObjectResult)result;
+    Assert.Equal("Username already exists.", conflictResult.Value);
+    _userLogicMock.Verify(ul => ul.SignUpUser(user), Times.Once);
+    _logger.Verify(logger => logger.Log(It.IsAny<Exception>()), Times.Once);
+  }
 
 }

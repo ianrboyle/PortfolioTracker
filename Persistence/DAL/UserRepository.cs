@@ -125,12 +125,10 @@ namespace Persistence.DAL
       try
       {
         if (conn.State != System.Data.ConnectionState.Open) { await conn.OpenAsync(); }
-
+        // change this to insert where not exists?
         var existingUser = await GetUserByUserName(user.UserName);
         if (existingUser != null)
         {
-          // Username already exists, handle the error or return an appropriate response
-          // For example, you can throw an exception or return a specific result indicating the error
           throw new Exception("Username already exists.");
         }
 
@@ -144,6 +142,7 @@ namespace Persistence.DAL
       catch (Exception ex)
       {
         await _logger.Log(ex);
+        throw;
       }
     }
 
