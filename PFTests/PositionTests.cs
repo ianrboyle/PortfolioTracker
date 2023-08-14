@@ -5,6 +5,7 @@ using Application.DTOs;
 using API.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace PFTests
 {
@@ -70,13 +71,13 @@ namespace PFTests
       var result = await controller.GetPositionById(1);
 
       // Assert
-      Assert.IsType<BadRequestResult>(result.Result);
+      var badRequestResult = Assert.IsType<ObjectResult>(result.Result);
+      Assert.Equal(StatusCodes.Status500InternalServerError, badRequestResult.StatusCode);
 
-      // var okResult = result.Result as OkObjectResult;
-      var statusCode = result.Result.ToString();
-      // Assert
-      Assert.Contains("Bad", statusCode);
-      // Assert.Equal(position.CurrentTotalValue, 150);
+      var errorResponse = Assert.IsType<ErrorResponse>(badRequestResult.Value); // Replace with the actual error response class
+
+      Assert.Equal("An error occurred while fetching the position.", errorResponse.Error);
+      Assert.Equal(exceptionString, errorResponse.Details);
     }
 
     [Fact]

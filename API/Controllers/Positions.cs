@@ -1,4 +1,5 @@
 using Application.DTOs;
+using Domain.Exceptions;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Persistence.BLL;
@@ -49,7 +50,13 @@ public class Positions : BaseController
     {
       await _logger.Log(ex);
 
-      return BadRequest();
+      var errorResponse = new ErrorResponse
+      {
+        Error = "An error occurred while fetching the position.",
+        Details = ex.Message // You can also include additional details from the exception
+      };
+
+      return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
     }
   }
 }
