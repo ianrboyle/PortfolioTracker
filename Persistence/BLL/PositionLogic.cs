@@ -1,5 +1,6 @@
 using Application.DTOs;
 using AutoMapper;
+using Domain.Exceptions;
 using Domain.Models;
 using Persistence.DAL;
 
@@ -19,6 +20,10 @@ namespace Persistence.BLL
     {
 
       var position = await _repository.GetPositionById(positionId);
+      if (position == null || position.Id == 0)
+      {
+        throw new NotFoundException($"Position with ID: {positionId} not found.");
+      }
       return _mapper.Map<Position, PositionDto>(position);
 
     }
