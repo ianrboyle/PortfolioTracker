@@ -102,19 +102,23 @@ public class UserRepositoryTests
     };
 
     // Assuming _userLogic is a mock of IUserLogic
-    _userLogic.Setup(ul => ul.GetUserById(0)).ThrowsAsync(new Exception("An error occurred while fetching the user with Id 0."));
+    string exceptionString = "User with ID: 0 not found.";
+    CustomException ex = new CustomException(exceptionString, 404);
+    _userLogic.Setup(ul => ul.GetUserById(0)).ThrowsAsync(ex);
 
     var controller = new Users(_userLogic.Object, _logger.Object);
 
     // Act
     var result = await controller.GetUser(0);
     var badRequestResult = Assert.IsType<ObjectResult>(result.Result);
-    Assert.Equal(StatusCodes.Status500InternalServerError, badRequestResult.StatusCode);
+    Assert.Equal(404, badRequestResult.StatusCode);
 
     var errorResponse = Assert.IsType<ErrorResponse>(badRequestResult.Value);
 
     Assert.Equal("An error occurred while fetching the user.", errorResponse.Error);
-    Assert.Equal("An error occurred while fetching the user with Id 0.", errorResponse.Details);
+    Assert.Equal("User with ID: 0 not found.", errorResponse.Details);
+    Assert.Equal(404, errorResponse.StatusCode);
+
   }
   [Fact]
   public async Task SignupUser_Success()
