@@ -63,17 +63,18 @@ public class Users : BaseController
 
       return Ok(user);
     }
-    catch (Exception ex)
+    catch (CustomException ex)
     {
       await _logger.Log(ex);
 
       var errorResponse = new ErrorResponse
       {
         Error = "An error occurred while fetching the user.",
-        Details = ex.Message
+        Details = ex.Message,
+        StatusCode = ex.StatusCode
       };
 
-      return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+      return StatusCode(ex.StatusCode, errorResponse);
     }
   }
 

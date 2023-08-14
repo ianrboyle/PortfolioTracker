@@ -46,17 +46,18 @@ public class Positions : BaseController
 
       return Ok(position);
     }
-    catch (Exception ex)
+    catch (CustomException ex)
     {
       await _logger.Log(ex);
 
       var errorResponse = new ErrorResponse
       {
         Error = "An error occurred while fetching the position.",
-        Details = ex.Message // You can also include additional details from the exception
+        Details = ex.Message,
+        StatusCode = ex.StatusCode
       };
 
-      return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+      return StatusCode(ex.StatusCode, errorResponse);
     }
   }
 }

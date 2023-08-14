@@ -61,7 +61,7 @@ namespace PFTests
       };
 
       string exceptionString = $"Position with ID: 0 not found.";
-      NotFoundException ex = new NotFoundException(exceptionString);
+      CustomException ex = new CustomException(exceptionString, 404);
 
       _positionLogic.Setup(ul => ul.GetPositionById(1)).ThrowsAsync(ex);
 
@@ -72,7 +72,7 @@ namespace PFTests
 
       // Assert
       var badRequestResult = Assert.IsType<ObjectResult>(result.Result);
-      Assert.Equal(StatusCodes.Status500InternalServerError, badRequestResult.StatusCode);
+      Assert.Equal(404, badRequestResult.StatusCode);
 
       var errorResponse = Assert.IsType<ErrorResponse>(badRequestResult.Value); // Replace with the actual error response class
 

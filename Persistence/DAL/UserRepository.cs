@@ -1,5 +1,6 @@
 using System.Globalization;
 using Domain;
+using Domain.Exceptions;
 using Npgsql;
 using Persistence.Logger;
 
@@ -54,25 +55,19 @@ namespace Persistence.DAL
 
           await using var rdr = await cmd.ExecuteReaderAsync();
 
-          if (await rdr.ReadAsync())
+          while (await rdr.ReadAsync())
           {
             user = new User(rdr);
-            return user;
+
           }
-          {
-            throw new ArgumentException("Invalid user ID.");
-          }
-        }
-        catch (NpgsqlException ex)
-        {
-          await _logger.Log(ex);
-          throw;
         }
         catch (Exception ex)
         {
-          await _logger.Log(ex);
-          throw new Exception($"An error occurred while fetching the user with Id {userId}.");
+          CustomException cex = new CustomException(ex.Message, 400);
+          await _logger.Log(cex);
+          throw cex;
         }
+        return user;
       }
     }
     public async Task<User> GetUserByUserName(string userName)

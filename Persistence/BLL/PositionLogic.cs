@@ -1,3 +1,4 @@
+using System.Net;
 using Application.DTOs;
 using AutoMapper;
 using Domain.Exceptions;
@@ -11,8 +12,10 @@ namespace Persistence.BLL
   {
     private readonly IPositionRepository _repository;
     private readonly IMapper _mapper;
-    public PositionLogic(IPositionRepository repository, IMapper mapper)
+    private readonly IUserLogic _userLogic;
+    public PositionLogic(IPositionRepository repository, IMapper mapper, IUserLogic userLogic)
     {
+      _userLogic = userLogic;
       _mapper = mapper;
       _repository = repository;
 
@@ -24,7 +27,7 @@ namespace Persistence.BLL
       if (position == null || position.Id == 0)
       {
         string exceptionString = $"Position with ID: {positionId} not found.";
-        NotFoundException ex = new NotFoundException(exceptionString);
+        CustomException ex = new CustomException(exceptionString, 404);
         throw ex;
       }
       return _mapper.Map<Position, PositionDto>(position);
@@ -34,6 +37,11 @@ namespace Persistence.BLL
     public async Task<List<PositionDto>> GetUserPositions(int appUserId)
     {
       var positions = await _repository.GetUserPositions(appUserId);
+      if (!positions.Any())
+      {
+        //check if user exists
+        var user = await _userLogic.GetUserById(appUserId);
+      }
       return _mapper.Map<List<Position>, List<PositionDto>>(positions);
     }
   }

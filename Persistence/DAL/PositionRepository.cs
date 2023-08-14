@@ -1,3 +1,4 @@
+using Domain.Exceptions;
 using Domain.Models;
 using Npgsql;
 using Persistence.Logger;
@@ -40,7 +41,9 @@ namespace Persistence.DAL
         }
         catch (Exception ex)
         {
-          await _logger.Log(ex);
+          CustomException cex = new CustomException(ex.Message, 400);
+          await _logger.Log(cex);
+          throw cex;
         }
       }
 
@@ -73,7 +76,9 @@ namespace Persistence.DAL
         }
         catch (Exception ex)
         {
-          await _logger.Log(ex);
+          CustomException cex = new CustomException(ex.Message, 400);
+          await _logger.Log(cex);
+          throw cex;
         }
       }
 
