@@ -36,7 +36,5 @@ namespace Persistence.BLL
       var positions = await _repository.GetUserPositions(appUserId);
       return _mapper.Map<List<Position>, List<PositionDto>>(positions);
     }
-
-
   }
 }

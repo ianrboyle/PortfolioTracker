@@ -79,5 +79,48 @@ namespace PFTests
       // Assert.Equal(position.CurrentTotalValue, 150);
     }
 
+    [Fact]
+    async Task GetPositionsByUserId_Success()
+    {
+
+
+      List<PositionDto> positions = new()
+      {
+        new PositionDto
+              {
+                Id = 1,
+                Symbol = "BTU",
+                AverageCostBasis = 15,
+                SharesOwned = 10,
+                SectorName = "Energy",
+                IndustryName = "Coal"
+              },
+        new PositionDto
+              {
+                Id = 2,
+                Symbol = "test",
+                AverageCostBasis = 10,
+                SharesOwned = 10,
+                SectorName = "test",
+                IndustryName = "test"
+              }
+    };
+
+      _positionLogic.Setup(ul => ul.GetUserPositions(1)).ReturnsAsync(positions);
+
+      var controller = new Positions(_positionLogic.Object, _logger.Object);
+
+      // Act
+      var result = await controller.GetUserPositions(1);
+
+      // Assert
+      Assert.IsType<OkObjectResult>(result.Result);
+
+      var okResult = result.Result as OkObjectResult;
+      Assert.Equal(positions, okResult.Value);
+      Assert.Equal(positions.FirstOrDefault().CurrentTotalValue, 150);
+      Assert.Equal(positions.Last().CurrentTotalValue, 100);
+    }
+
   }
 }
