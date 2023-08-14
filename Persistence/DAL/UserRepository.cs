@@ -71,7 +71,7 @@ namespace Persistence.DAL
         catch (Exception ex)
         {
           await _logger.Log(ex);
-          throw new Exception("An error occurred while fetching the user.");
+          throw new Exception($"An error occurred while fetching the user with Id {userId}.");
         }
       }
     }

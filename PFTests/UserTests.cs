@@ -5,6 +5,8 @@ using Persistence.BLL;
 using Domain;
 using API.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Domain.Exceptions;
 
 public class UserRepositoryTests
 
@@ -100,17 +102,19 @@ public class UserRepositoryTests
     };
 
     // Assuming _userLogic is a mock of IUserLogic
-    _userLogic.Setup(ul => ul.GetUserById(0)).ThrowsAsync(new Exception("An error occurred while fetching the user."));
+    _userLogic.Setup(ul => ul.GetUserById(0)).ThrowsAsync(new Exception("An error occurred while fetching the user with Id 0."));
 
     var controller = new Users(_userLogic.Object, _logger.Object);
 
     // Act
     var result = await controller.GetUser(0);
-    var statusCode = result.Result.ToString();
-    // Assert
-    Assert.Contains("Bad", statusCode);
-    // var badRequestResult = result as BadRequestObjectResult;
-    // Assert.Equal("An error occurred while fetching the user.", result.Value);
+    var badRequestResult = Assert.IsType<ObjectResult>(result.Result);
+    Assert.Equal(StatusCodes.Status500InternalServerError, badRequestResult.StatusCode);
+
+    var errorResponse = Assert.IsType<ErrorResponse>(badRequestResult.Value);
+
+    Assert.Equal("An error occurred while fetching the user.", errorResponse.Error);
+    Assert.Equal("An error occurred while fetching the user with Id 0.", errorResponse.Details);
   }
   [Fact]
   public async Task SignupUser_Success()

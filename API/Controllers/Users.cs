@@ -1,4 +1,5 @@
 using Domain;
+using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Persistence.BLL;
 using Persistence.Logger;
@@ -66,7 +67,13 @@ public class Users : BaseController
     {
       await _logger.Log(ex);
 
-      return BadRequest();
+      var errorResponse = new ErrorResponse
+      {
+        Error = "An error occurred while fetching the user.",
+        Details = ex.Message
+      };
+
+      return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
     }
   }
 
