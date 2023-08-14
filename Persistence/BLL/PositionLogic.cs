@@ -3,6 +3,7 @@ using AutoMapper;
 using Domain.Exceptions;
 using Domain.Models;
 using Persistence.DAL;
+using Persistence.Logger;
 
 namespace Persistence.BLL
 {
@@ -22,7 +23,9 @@ namespace Persistence.BLL
       var position = await _repository.GetPositionById(positionId);
       if (position == null || position.Id == 0)
       {
-        throw new NotFoundException($"Position with ID: {positionId} not found.");
+        string exceptionString = $"Position with ID: {positionId} not found.";
+        NotFoundException ex = new NotFoundException(exceptionString);
+        throw ex;
       }
       return _mapper.Map<Position, PositionDto>(position);
 

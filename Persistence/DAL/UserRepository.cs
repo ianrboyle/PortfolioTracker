@@ -60,21 +60,18 @@ namespace Persistence.DAL
             return user;
           }
           {
-            // No user found for the given ID
             throw new ArgumentException("Invalid user ID.");
           }
         }
         catch (NpgsqlException ex)
         {
-          // Handle PostgreSQL-specific exceptions
           await _logger.Log(ex);
-          throw; // Re-throw the exception to propagate it further
+          throw;
         }
         catch (Exception ex)
         {
-          // Handle general exceptions
           await _logger.Log(ex);
-          throw new Exception("An error occurred while fetching the user."); // Throw a custom exception message
+          throw new Exception("An error occurred while fetching the user.");
         }
       }
     }
