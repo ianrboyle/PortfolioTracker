@@ -1,7 +1,6 @@
 
 using Persistence.BLL;
 using Persistence.DAL;
-using Persistence.Logger;
 
 namespace API.Extensions
 {
@@ -19,17 +18,7 @@ namespace API.Extensions
       services.AddScoped<IUserLogic, UserLogic>();
       services.AddScoped<IPositionLogic, PositionLogic>();
       services.AddScoped<IPositionRepository, PositionRepository>();
-      // services.AddScoped<IUserRepository, UserRepository>();
-      // services.AddScoped<IPositionService, PositionService>();
-      // services.AddScoped<ISectorService, SectorService>();
-      // services.AddScoped<IIndustryService, IndustryService>();
-      // services.AddScoped<ISectorRepository, SectorRepository>();
-      // services.AddScoped<IIndustryRepository, IndustryRepository>();
-      // services.AddScoped<IPositionRepository, PositionRepository>();
-      // services.AddScoped<IAlphaAdvantageClient, AlphaAdvantageClient>();
-      // services.AddScoped<ISectorRepository, SectorRepository>();
-      // services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-      // services.Configure<AlphaAdvantageApiSettings>(config.GetSection("AlphaAdvantageApiSettings"));
+      services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
       return services;
 

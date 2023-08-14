@@ -21,11 +21,11 @@ public class Positions : BaseController
   }
 
   [HttpGet("{appUserId}")]
-  public async Task<ActionResult<List<Position>>> GetUserPositions(int appUserId)
+  public async Task<ActionResult<List<PositionDto>>> GetUserPositions(int appUserId)
   {
     try
     {
-      List<Position> positions = await _positionLogic.GetUserPositions(appUserId);
+      List<PositionDto> positions = await _positionLogic.GetUserPositions(appUserId);
 
       return Ok(positions);
     }

@@ -5,7 +5,7 @@ namespace Persistence.BLL
 {
   public interface IPositionLogic
   {
-    Task<List<Position>> GetUserPositions(int appUserId);
+    Task<List<PositionDto>> GetUserPositions(int appUserId);
     Task<PositionDto> GetPositionById(int positionId);
   }
 }

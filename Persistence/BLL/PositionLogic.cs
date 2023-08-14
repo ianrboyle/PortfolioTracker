@@ -19,20 +19,14 @@ namespace Persistence.BLL
     {
 
       var position = await _repository.GetPositionById(positionId);
-      var positionDto = MapPosition(position);
-      return positionDto;
-
-    }
-
-    public Task<List<Position>> GetUserPositions(int appUserId)
-    {
-      return _repository.GetUserPositions(appUserId);
-    }
-
-    private PositionDto MapPosition(Position position)
-    {
-      PositionDto positionDto = new();
       return _mapper.Map<Position, PositionDto>(position);
+
+    }
+
+    public async Task<List<PositionDto>> GetUserPositions(int appUserId)
+    {
+      var positions = await _repository.GetUserPositions(appUserId);
+      return _mapper.Map<List<Position>, List<PositionDto>>(positions);
     }
 
 
