@@ -1,8 +1,7 @@
-using Domain;
+using Application.DTOs;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Persistence.BLL;
-using Persistence.Logger;
 
 
 namespace API.Controllers;
@@ -13,9 +12,11 @@ public class Positions : BaseController
 {
 
   private readonly IPositionLogic _positionLogic;
+  private readonly Persistence.Logger.ILogger _logger;
 
-  public Positions(IPositionLogic positionLogic)
+  public Positions(IPositionLogic positionLogic, Persistence.Logger.ILogger logger)
   {
+    _logger = logger;
     _positionLogic = positionLogic;
   }
 
@@ -30,25 +31,26 @@ public class Positions : BaseController
     }
     catch (Exception ex)
     {
-      await Logger.Log(ex, appUserId.ToString());
+      await _logger.Log(ex, appUserId.ToString());
 
       return BadRequest();
     }
   }
   [HttpGet("position/{positionId}")]
-  public async Task<ActionResult<Position>> GetPositionById(int positionId)
+  public async Task<ActionResult<PositionDto>> GetPositionById(int positionId)
   {
     try
     {
-      Position position = await _positionLogic.GetPositionById(positionId);
+      PositionDto position = await _positionLogic.GetPositionById(positionId);
 
       return Ok(position);
     }
     catch (Exception ex)
     {
-      await Logger.Log(ex);
+      await _logger.Log(ex);
 
       return BadRequest();
     }
   }
 }
+

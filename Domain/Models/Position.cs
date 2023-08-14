@@ -12,8 +12,9 @@ namespace Domain.Models
       this.Symbol = rdr["symbol"].ToString();
       this.SharesOwned = float.Parse(rdr["shares_owned"].ToString());
       this.AverageCostBasis = float.Parse(rdr["average_cost_basis"].ToString());
-      this.SharesOwned = float.Parse(rdr["shares_owned"].ToString());
 
+      this.SectorName = rdr["sector_name"].ToString();
+      this.IndustryName = rdr["industry_name"].ToString();
       //   this.AppUserId = Int32.Parse(rdr["app_user_id"].ToString());
       // this.Created = DateTime.Parse(rdr["dateofbirth"].ToString(), CultureInfo.CurrentCulture, DateTimeStyles.None);
       // this.InvestingStyle = rdr["investingstyle"].ToString();
@@ -27,5 +28,8 @@ namespace Domain.Models
     public int AppUserId { get; set; }
     public int SectorId { get; set; }
     public int IndustryId { get; set; }
+    public string SectorName { get; set; }
+    public string IndustryName { get; set; }
   }
 }
+
