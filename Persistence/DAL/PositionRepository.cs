@@ -9,12 +9,9 @@ namespace Persistence.DAL
   {
     IConnections _connections;
 
-    ILogger _logger;
-
-    public PositionRepository(IConnections connections, ILogger logger)
+    public PositionRepository(IConnections connections)
     {
       _connections = connections;
-      _logger = logger;
     }
     public async Task<Position> GetPositionById(int positionId)
     {
@@ -62,8 +59,6 @@ namespace Persistence.DAL
           await using NpgsqlCommand cmd = new NpgsqlCommand(sqlString, conn);
 
           cmd.Parameters.AddWithValue("appUserId", appUserId);
-
-          // cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
           await using var rdr = await cmd.ExecuteReaderAsync();
 

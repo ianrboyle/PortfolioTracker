@@ -52,11 +52,18 @@ public class Users : BaseController
 
       return Ok(users);
     }
-    catch (Exception ex)
+    catch (CustomException ex)
     {
       await Logger.Log(ex);
 
-      return BadRequest();
+      var errorResponse = new ErrorResponse
+      {
+        Error = "An error occurred while fetching the users.",
+        Details = ex.Message,
+        StatusCode = ex.StatusCode
+      };
+
+      return StatusCode(ex.StatusCode, errorResponse);
     }
   }
 
@@ -87,7 +94,24 @@ public class Users : BaseController
   [HttpDelete("{userId}")]
   public async Task<IActionResult> DeleteUser(int userId)
   {
-    await _userLogic.DeleteUser(userId);
-    return Ok("Deletion successful.");
+    try
+    {
+      await _userLogic.DeleteUser(userId);
+      return Ok("Deletion successful.");
+    }
+    catch (CustomException ex)
+    {
+      await _logger.Log(ex);
+
+      var errorResponse = new ErrorResponse
+      {
+        Error = "An error occurred while deleting the user.",
+        Details = ex.Message,
+        StatusCode = ex.StatusCode
+      };
+
+      return StatusCode(ex.StatusCode, errorResponse);
+    }
+
   }
 }

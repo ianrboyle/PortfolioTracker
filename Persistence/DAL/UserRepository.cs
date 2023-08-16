@@ -2,7 +2,6 @@ using System.Globalization;
 using Domain;
 using Domain.Exceptions;
 using Npgsql;
-using Persistence.Logger;
 
 
 namespace Persistence.DAL
@@ -11,12 +10,9 @@ namespace Persistence.DAL
   {
     IConnections _connections;
 
-    ILogger _logger;
-
-    public UserRepository(IConnections connections, ILogger logger)
+    public UserRepository(IConnections connections)
     {
       _connections = connections;
-      _logger = logger;
     }
 
     public async Task DeleteUser(int userId)
@@ -36,7 +32,6 @@ namespace Persistence.DAL
       catch (Exception ex)
       {
         CustomException cex = new CustomException(ex.Message, 400, ex);
-        await _logger.Log(cex);
         throw cex;
       }
     }
@@ -65,7 +60,6 @@ namespace Persistence.DAL
         catch (Exception ex)
         {
           CustomException cex = new CustomException(ex.Message, 400, ex);
-          await _logger.Log(cex);
           throw cex;
         }
         return user;
@@ -97,7 +91,6 @@ namespace Persistence.DAL
         catch (Exception ex)
         {
           CustomException cex = new CustomException(ex.Message, 400, ex);
-          await _logger.Log(cex);
           throw cex;
         }
       }
@@ -127,7 +120,6 @@ namespace Persistence.DAL
         catch (Exception ex)
         {
           CustomException cex = new CustomException(ex.Message, 400, ex);
-          await _logger.Log(cex);
           throw cex;
         }
       }
