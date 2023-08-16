@@ -32,6 +32,11 @@ namespace Persistence.BLL
 
     public Task SignUpUser(User appUser)
     {
+      var existingUser = _repository.GetUserByUserName(appUser.UserName);
+      if (existingUser != null)
+      {
+        throw new CustomException($"Username '{appUser.UserName}' already exists.", 409);
+      }
       return _repository.SignUpUser(appUser);
     }
     public Task DeleteUser(int userId)

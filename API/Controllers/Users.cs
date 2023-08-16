@@ -30,10 +30,16 @@ public class Users : BaseController
       return Ok("Sign-up successful.");
 
     }
-    catch (Exception ex)
+    catch (CustomException ex)
     {
-      await _logger.Log(ex);
-      return Conflict(ex.Message);
+      var errorResponse = new ErrorResponse
+      {
+        Error = "An error occurred while signing up the user.",
+        Details = ex.Message,
+        StatusCode = ex.StatusCode
+      };
+
+      return StatusCode(ex.StatusCode, errorResponse);
     }
   }
 
@@ -83,7 +89,5 @@ public class Users : BaseController
   {
     await _userLogic.DeleteUser(userId);
     return Ok("Deletion successful.");
-
-
   }
 }

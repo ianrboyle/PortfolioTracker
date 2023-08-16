@@ -35,8 +35,9 @@ namespace Persistence.DAL
       }
       catch (Exception ex)
       {
-        await _logger.Log(ex);
-        throw;
+        CustomException cex = new CustomException(ex.Message, 400, ex);
+        await _logger.Log(cex);
+        throw cex;
       }
     }
 
@@ -63,7 +64,7 @@ namespace Persistence.DAL
         }
         catch (Exception ex)
         {
-          CustomException cex = new CustomException(ex.Message, 400);
+          CustomException cex = new CustomException(ex.Message, 400, ex);
           await _logger.Log(cex);
           throw cex;
         }
@@ -95,9 +96,9 @@ namespace Persistence.DAL
         }
         catch (Exception ex)
         {
-          await _logger.Log(ex);
-          return null;
-
+          CustomException cex = new CustomException(ex.Message, 400, ex);
+          await _logger.Log(cex);
+          throw cex;
         }
       }
     }
@@ -125,7 +126,9 @@ namespace Persistence.DAL
         }
         catch (Exception ex)
         {
-          await _logger.Log(ex);
+          CustomException cex = new CustomException(ex.Message, 400, ex);
+          await _logger.Log(cex);
+          throw cex;
         }
       }
 
@@ -139,11 +142,11 @@ namespace Persistence.DAL
       {
         if (conn.State != System.Data.ConnectionState.Open) { await conn.OpenAsync(); }
         // change this to insert where not exists?
-        var existingUser = await GetUserByUserName(user.UserName);
-        if (existingUser != null)
-        {
-          throw new Exception("Username already exists.");
-        }
+        // var existingUser = await GetUserByUserName(user.UserName);
+        // if (existingUser != null)
+        // {
+        //   throw new CustomException("Username already exists.", 409);
+        // } 
 
         var sqlString = $"CALL insert_app_user('{user.UserName}');";
         await using NpgsqlCommand cmd = new NpgsqlCommand(sqlString, conn);
@@ -154,8 +157,9 @@ namespace Persistence.DAL
       }
       catch (Exception ex)
       {
-        await _logger.Log(ex);
-        throw;
+        CustomException cex = new CustomException(ex.Message, 400, ex);
+        await _logger.Log(cex);
+        throw cex;
       }
     }
 

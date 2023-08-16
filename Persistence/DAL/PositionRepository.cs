@@ -41,7 +41,7 @@ namespace Persistence.DAL
         }
         catch (Exception ex)
         {
-          CustomException cex = new CustomException(ex.Message, 400);
+          CustomException cex = new CustomException(ex.Message, 400, ex);
           await _logger.Log(cex);
           throw cex;
         }
@@ -76,7 +76,7 @@ namespace Persistence.DAL
         }
         catch (Exception ex)
         {
-          CustomException cex = new CustomException(ex.Message, 400);
+          CustomException cex = new CustomException(ex.Message, 400, ex);
           await _logger.Log(cex);
           throw cex;
         }
