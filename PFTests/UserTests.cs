@@ -158,20 +158,29 @@ public class UserRepositoryTests
     };
 
     var _userLogicMock = new Mock<IUserLogic>();
-    _userLogicMock.Setup(ul => ul.SignUpUser(user)).ThrowsAsync(new Exception("Username already exists."));
+    string exceptionString = "Username 'John' already exists.";
+    CustomException ex = new CustomException(exceptionString, 409);
+    _userLogicMock.Setup(ul => ul.SignUpUser(user)).ThrowsAsync(ex);
 
 
     var controller = new Users(_userLogicMock.Object, _logger.Object);
 
     // Act
-    IActionResult result = await controller.SignUpUser(user);
+    var result = await controller.SignUpUser(user);
 
     // Assert
-    Assert.IsType<ConflictObjectResult>(result);
-    var conflictResult = (ConflictObjectResult)result;
-    Assert.Equal("Username already exists.", conflictResult.Value);
+    var objectResult = Assert.IsType<ObjectResult>(result);
+    Assert.Equal(409, objectResult.StatusCode);
+
+    var errorResponse = Assert.IsType<ErrorResponse>(objectResult.Value);
+
+    Assert.Equal("An error occurred while signing up the user.", errorResponse.Error);
+    Assert.Equal("Username 'John' already exists.", errorResponse.Details);
+    Assert.Equal(409, errorResponse.StatusCode);
+    Assert.IsType<ObjectResult>(result);
+
     _userLogicMock.Verify(ul => ul.SignUpUser(user), Times.Once);
-    _logger.Verify(logger => logger.Log(It.IsAny<Exception>()), Times.Once);
+    _logger.Verify(logger => logger.Log(It.IsAny<CustomException>()), Times.Once);
   }
 
   [Fact]

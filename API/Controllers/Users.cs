@@ -38,7 +38,7 @@ public class Users : BaseController
         Details = ex.Message,
         StatusCode = ex.StatusCode
       };
-
+      await _logger.Log(ex);
       return StatusCode(ex.StatusCode, errorResponse);
     }
   }
