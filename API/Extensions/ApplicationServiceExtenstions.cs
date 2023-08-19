@@ -1,4 +1,6 @@
 
+using Application.Services;
+using Domain.Models.FinancialModelingPrep;
 using Persistence.BLL;
 using Persistence.DAL;
 
@@ -18,7 +20,9 @@ namespace API.Extensions
       services.AddScoped<IUserLogic, UserLogic>();
       services.AddScoped<IPositionLogic, PositionLogic>();
       services.AddScoped<IPositionRepository, PositionRepository>();
+      services.AddScoped<FinancialModelingPrepApiService>();
       services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+      services.Configure<FinancialModelingPrepSettings>(config.GetSection("FinancialModelingPrepSettings"));
 
       return services;
 

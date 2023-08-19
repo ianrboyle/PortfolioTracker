@@ -1,6 +1,8 @@
 using Application.DTOs;
+using Application.Services;
 using Domain.Exceptions;
 using Domain.Models;
+using Domain.Models.FinancialModelingPrep;
 using Microsoft.AspNetCore.Mvc;
 using Persistence.BLL;
 
@@ -14,9 +16,11 @@ public class Positions : BaseController
 
   private readonly IPositionLogic _positionLogic;
   private readonly Persistence.Logger.ILogger _logger;
+  private readonly FinancialModelingPrepApiService _fmpService;
 
-  public Positions(IPositionLogic positionLogic, Persistence.Logger.ILogger logger)
+  public Positions(IPositionLogic positionLogic, Persistence.Logger.ILogger logger, FinancialModelingPrepApiService fmpService)
   {
+    _fmpService = fmpService;
     _logger = logger;
     _positionLogic = positionLogic;
   }
@@ -59,6 +63,19 @@ public class Positions : BaseController
 
       return StatusCode(ex.StatusCode, errorResponse);
     }
+  }
+
+  [HttpGet("{symbol}/statement")]
+  public async Task<ActionResult<List<FinancialStatement>>> GetCompanyStatement(string symbol)
+  {
+    var statements = await _fmpService.GetFinancialStatements(symbol);
+    return statements;
+  }
+  [HttpGet("{symbol}/quote")]
+  public async Task<ActionResult<List<StockQuote>>> GetStockQuote(string symbol)
+  {
+    var quote = await _fmpService.GetStockQuote(symbol);
+    return quote;
   }
 }
 
