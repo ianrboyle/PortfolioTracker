@@ -18,7 +18,7 @@ namespace Domain.Models.FinancialModelingPrep
     public int Volume { get; set; }
     public int AvgVolume { get; set; }
     public double Open { get; set; }
-    public int PreviousClose { get; set; }
+    public double PreviousClose { get; set; }
     public double Eps { get; set; }
     public double Pe { get; set; }
     public string EarningsAnnouncement { get; set; }
