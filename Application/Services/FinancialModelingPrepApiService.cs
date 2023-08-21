@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
 using Domain.Models.FinancialModelingPrep;
 using System.Net.Http.Json;
-
+using Domain.Exceptions;
 
 namespace Application.Services
 {
@@ -36,11 +36,28 @@ namespace Application.Services
     }
     public async Task<List<StockQuote>> GetStockQuote(string symbol)
     {
+      try
+      {
+        var clientFactory = _client.CreateClient();
+        var path = _fmpSettings.Url + "/api/v3/quote/" + symbol + "?limit=120&apikey=" + _fmpSettings.ApiKey;
+        var stockQuotes = await clientFactory.GetFromJsonAsync<List<StockQuote>>(path);
+        return stockQuotes;
+      }
+      catch (System.Exception ex)
+      {
+        string exceptionString = $"Error calling FinancialModelingPrep API.";
+        CustomException cex = new CustomException(exceptionString, 400, ex);
+        throw cex;
+      }
+
+    }
+    public async Task<List<CompanyProfile>> GetCompanyProfile(string symbol)
+    {
 
       var clientFactory = _client.CreateClient();
-      var path = _fmpSettings.Url + "/api/v3/quote/" + symbol + "?limit=120&apikey=" + _fmpSettings.ApiKey;
-      var stockQuote = await clientFactory.GetFromJsonAsync<List<StockQuote>>(path);
-      return stockQuote;
+      var path = _fmpSettings.Url + "/api/v3/profile/" + symbol + "?limit=120&apikey=" + _fmpSettings.ApiKey;
+      var profiles = await clientFactory.GetFromJsonAsync<List<CompanyProfile>>(path);
+      return profiles;
     }
   }
 }
