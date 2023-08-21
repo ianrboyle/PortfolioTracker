@@ -7,5 +7,6 @@ namespace Persistence.BLL
   {
     Task<List<PositionDto>> GetUserPositions(int appUserId);
     Task<PositionDto> GetPositionById(int positionId);
+    Task AddPosition(Position position);
   }
 }

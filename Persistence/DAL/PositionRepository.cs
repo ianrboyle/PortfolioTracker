@@ -1,7 +1,7 @@
 using Domain.Exceptions;
 using Domain.Models;
 using Npgsql;
-using Persistence.Logger;
+using NpgsqlTypes;
 
 namespace Persistence.DAL
 {
@@ -13,6 +13,38 @@ namespace Persistence.DAL
     {
       _connections = connections;
     }
+
+    public async Task AddNewPosition(Position position)
+    {
+
+      await using NpgsqlConnection conn = _connections.GetConnection();
+      {
+        try
+        {
+          if (conn.State != System.Data.ConnectionState.Open) { await conn.OpenAsync(); }
+
+
+          await using var cmd = new NpgsqlCommand("insert_position", conn);
+          cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+          cmd.Parameters.Add(new NpgsqlParameter("p_symbol", NpgsqlDbType.Text) { Value = position.Symbol });
+          cmd.Parameters.Add(new NpgsqlParameter("p_sharesowned", NpgsqlDbType.Numeric) { Value = position.SharesOwned });
+          cmd.Parameters.Add(new NpgsqlParameter("p_averagecostbasis", NpgsqlDbType.Numeric) { Value = position.AverageCostBasis });
+          cmd.Parameters.Add(new NpgsqlParameter("p_sectorid", NpgsqlDbType.Integer) { Value = position.SectorId });
+          cmd.Parameters.Add(new NpgsqlParameter("p_industryid", NpgsqlDbType.Integer) { Value = position.IndustryId });
+          cmd.Parameters.Add(new NpgsqlParameter("p_appuserid", NpgsqlDbType.Integer) { Value = position.AppUserId });
+          await using var rdr = await cmd.ExecuteReaderAsync();
+
+        }
+        catch (Exception ex)
+        {
+          CustomException cex = new CustomException(ex.Message, 400, ex);
+          throw cex;
+        }
+      }
+
+    }
+
     public async Task<Position> GetPositionById(int positionId)
     {
       Position position = new();

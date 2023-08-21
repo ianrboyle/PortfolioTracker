@@ -65,6 +65,31 @@ public class Positions : BaseController
     }
   }
 
+  [HttpPost("add/{symbol}")]
+  public async Task<IActionResult> AddPosition([FromBody] Position position)
+  {
+    try
+    {
+      await _positionLogic.AddPosition(position);
+      return Ok("Success");
+    }
+
+    catch (CustomException ex)
+    {
+      await _logger.Log(ex);
+
+      var errorResponse = new ErrorResponse
+      {
+        Error = "An error occurred while adding the position.",
+        Details = ex.Message,
+        StatusCode = ex.StatusCode
+      };
+
+      return StatusCode(ex.StatusCode, errorResponse);
+    }
+
+  }
+
   [HttpGet("{symbol}/statement")]
   public async Task<ActionResult<List<FinancialStatement>>> GetCompanyStatement(string symbol)
   {
