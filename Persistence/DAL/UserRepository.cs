@@ -90,7 +90,7 @@ namespace Persistence.DAL
         }
         catch (Exception ex)
         {
-          CustomException cex = new CustomException(ex.Message, 400, ex);
+          CustomException cex = new(ex.Message, 400, ex);
           throw cex;
         }
       }
@@ -133,12 +133,7 @@ namespace Persistence.DAL
       try
       {
         if (conn.State != System.Data.ConnectionState.Open) { await conn.OpenAsync(); }
-        // change this to insert where not exists?
-        // var existingUser = await GetUserByUserName(user.UserName);
-        // if (existingUser != null)
-        // {
-        //   throw new CustomException("Username already exists.", 409);
-        // } 
+
 
         var sqlString = $"CALL insert_app_user('{user.UserName}');";
         await using NpgsqlCommand cmd = new NpgsqlCommand(sqlString, conn);

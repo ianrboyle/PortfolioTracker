@@ -30,14 +30,14 @@ namespace Persistence.BLL
       return await _repository.GetUsers();
     }
 
-    public Task SignUpUser(User appUser)
+    public async Task SignUpUser(User appUser)
     {
-      var existingUser = _repository.GetUserByUserName(appUser.UserName);
+      var existingUser = await _repository.GetUserByUserName(appUser.UserName);
       if (existingUser != null)
       {
         throw new CustomException($"Username '{appUser.UserName}' already exists.", 409);
       }
-      return _repository.SignUpUser(appUser);
+      await _repository.SignUpUser(appUser);
     }
     public Task DeleteUser(int userId)
     {
