@@ -3,6 +3,7 @@ using Application.Services;
 using Domain.Models.FinancialModelingPrep;
 using Persistence.BLL;
 using Persistence.DAL;
+using StackExchange.Redis;
 
 namespace API.Extensions
 {
@@ -14,6 +15,7 @@ namespace API.Extensions
       services.AddCors();
       services.AddHttpClient();
       services.AddScoped<IConnections, Connections>();
+      services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
       services.AddScoped<IDataLogger, DataLogger>();
       services.AddScoped<Persistence.Logger.ILogger, Persistence.Logger.Logger>();
       services.AddScoped<IUserRepository, UserRepository>();

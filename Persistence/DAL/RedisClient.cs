@@ -1,7 +1,4 @@
 using Domain.Models;
-using Persistence.Logger;
-using NRedisStack;
-using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
 using Application.Services;
 using Domain.Exceptions;
@@ -10,19 +7,19 @@ namespace Persistence.DAL
 {
   public class RedisClient : IRedisClient
   {
-    private readonly ConnectionMultiplexer _redis;
-    private readonly FinancialModelingPrepApiService _fmpService;
-    public RedisClient(FinancialModelingPrepApiService fmpService)
+
+    private readonly IDatabase _redisDatabase;
+
+    public RedisClient(IConnectionMultiplexer connectionMultiplexer)
     {
-      _fmpService = fmpService;
-      _redis = ConnectionMultiplexer.Connect("localhost");
+      _redisDatabase = connectionMultiplexer.GetDatabase();
     }
 
     public async Task AddCompanyInfoToRedis(CompanyInformation companyInfo)
     {
       try
       {
-        await _redis.GetDatabase().StringSetAsync(companyInfo.Symbol, ConvertCompanyInformationToRedisValue(companyInfo));
+        await _redisDatabase.StringSetAsync(companyInfo.Symbol, ConvertCompanyInformationToRedisValue(companyInfo));
       }
       catch (System.Exception ex)
       {
@@ -36,7 +33,7 @@ namespace Persistence.DAL
     {
       try
       {
-        var redisValue = await _redis.GetDatabase().StringGetAsync(symbol);
+        var redisValue = await _redisDatabase.StringGetAsync(symbol);
 
         if (!redisValue.IsNullOrEmpty)
         {
@@ -50,19 +47,12 @@ namespace Persistence.DAL
         throw cex;
       }
 
-
-
-
-
     }
 
 
-
-    // Implement methods to convert between RedisValue and CompanyInformation
     private RedisValue ConvertCompanyInformationToRedisValue(CompanyInformation companyInfo)
     {
-      // Convert CompanyInformation to JSON string or other format as needed
-      return companyInfo.CompanyInfoToJson();  // Example, assuming ToJson() method converts to JSON string
+      return companyInfo.CompanyInfoToJson();
     }
 
 
