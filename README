@@ -1,3 +1,7 @@
 TODO:
 - CRUD Position
 - TESTS for Position
+- Set up caching? would require updates every 24 hours
+- Unit tests for fmp?
+- figure out why GetUserById isn't throwing errors correctly
+- address getUserPositions logic... should we even check for user considering when this will only be called when a user is logged in?
