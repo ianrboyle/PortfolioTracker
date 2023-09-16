@@ -53,13 +53,15 @@ namespace Persistence.BLL
 
     public async Task<List<PositionDto>> GetUserPositions(int appUserId)
     {
-      var positions = await _repository.GetUserPositions(appUserId);
-      if (!positions.Any())
+      var user = await _userLogic.GetUserById(appUserId);
+      if (user != null)
       {
-        //check if user exists
-        var user = await _userLogic.GetUserById(appUserId);
+        var positions = await _repository.GetUserPositions(appUserId);
+        return _mapper.Map<List<Position>, List<PositionDto>>(positions);
       }
-      return _mapper.Map<List<Position>, List<PositionDto>>(positions);
+
+      return new List<PositionDto>();
+
     }
 
     private async Task<CompanyInformation> GetCompanyInformation(Position position)
@@ -74,9 +76,9 @@ namespace Persistence.BLL
         var profiles = new List<CompanyProfile>();
         var prof = new CompanyProfile
         {
-          Sector = "Technology",
-          Industry = "Consumer Electronics",
-          CompanyName = "Apple Inc",
+          Sector = "Energy",
+          Industry = "Coal",
+          CompanyName = "Peabody",
           Country = "USA"
         };
         profiles.Add(prof);

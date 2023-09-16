@@ -5,7 +5,7 @@ using Application.DTOs;
 using API.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Exceptions;
-using Microsoft.AspNetCore.Http;
+using Domain.Models;
 
 namespace PFTests
 {
@@ -13,6 +13,7 @@ namespace PFTests
   {
     private readonly Mock<IPositionLogic> _positionLogic;
     private readonly Mock<ILogger> _logger;
+
 
     public PositionTests()
     {
@@ -83,8 +84,6 @@ namespace PFTests
     [Fact]
     async Task GetPositionsByUserId_Success()
     {
-
-
       List<PositionDto> positions = new()
       {
         new PositionDto
@@ -122,6 +121,39 @@ namespace PFTests
       Assert.Equal(positions.FirstOrDefault().CurrentTotalValue, 150);
       Assert.Equal(positions.Last().CurrentTotalValue, 100);
     }
+    [Fact]
 
+    async Task AddPosition_Success()
+    {
+      Position position = new()
+      {
+        Symbol = "BTU",
+        AverageCostBasis = 15,
+        SharesOwned = 2,
+        AppUserId = 1,
+        SectorId = 1,
+        IndustryId = 1,
+        SectorName = "Energy",
+        IndustryName = "Coal"
+      };
+
+
+      _positionLogic.Setup(pl => pl.AddPosition(position)).Returns(Task.CompletedTask);
+
+      var controller = new Positions(_positionLogic.Object, _logger.Object);
+
+      // Act
+      await controller.AddPosition(position);
+      // Assert
+      _positionLogic.Verify(pl => pl.AddPosition(position), Times.Once);
+
+      // Act
+      IActionResult result = await controller.AddPosition(position);
+
+      // Assert
+      Assert.IsType<OkObjectResult>(result);
+      var okResult = (OkObjectResult)result;
+      Assert.Equal("Success", okResult.Value);
+    }
   }
 }

@@ -16,10 +16,10 @@ namespace Persistence.BLL
     public async Task<User> GetUserById(int userId)
     {
       var user = await _repository.GetUserById(userId);
-      if (user.Id == 0 || user == null)
+      if (user == null || user.Id == 0)
       {
-        string exceptionString = $"User with ID: {userId} not found.";
-        CustomException ex = new CustomException(exceptionString, 404);
+        string exceptionString = $"User with ID: {userId.ToString()} not found.";
+        CustomException ex = new(exceptionString, 404);
         throw ex;
       }
       return user;
